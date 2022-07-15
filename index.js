@@ -10,7 +10,7 @@ const app = express()
 let smtp_login = process.env.SMPT_LOGIN
 let smtp_password = process.env.SMPT_PASSWORD
 let smtp_urlhost = process.env.SMPT_URLHOST
-app.use(cors({origin: smtp_urlhost}))
+app.use(cors())
 //app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
