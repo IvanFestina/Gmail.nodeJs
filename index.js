@@ -6,12 +6,13 @@ const bodyParser = require('body-parser')
 
 const app = express()
 
-app.use(cors())
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json)
 
-let smtp_login = process.env.SMPT_LOGIN || '---'
-let smtp_password = process.env.SMPT_LOGIN || '---'
+let smtp_login = process.env.SMPT_LOGIN
+let smtp_password = process.env.SMPT_PASSWORD
+let smtp_urlhost = process.env.SMPT_URLHOST
+app.use(cors({origin: smtp_urlhost}))
+//app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
 
 let transporter = nodeMailer.createTransport({
         tls: {
@@ -19,16 +20,19 @@ let transporter = nodeMailer.createTransport({
         },
         service: "gmail",
         auth: {
-            user: "ivanfestina@gmail.com",
-            pass: "vawuzcnvmguzgbku"
+            user: 'ivanfestina@gmail.com',
+            pass: 'vawuzcnvmguzgbku'
         }
     })
 
 app.get('/', function (req, res) {
     res.send('Hello World');
 })
-app.post('/sendMessage',  async function (req, res) {
-    let {message, contacts, name } = req.body;
+app.post('/sendMessages',  async function (req, res) {
+
+console.log('we are in a post request')
+    let {message, email, name} = req.body;
+    console.log(req.body)
 
     let info = await transporter.sendMail({
     from: "From my portfolio page",
@@ -36,7 +40,7 @@ app.post('/sendMessage',  async function (req, res) {
     subject: "From my portfolio page",
     html: `<div>Message from your portfolio page</div>
             <div>${message}</div>
-            <div>${contacts}</div>
+            <div>${email}</div>
             <div>${name}</div>`
     });
     res.send('ok');
